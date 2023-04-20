@@ -1,0 +1,48 @@
+[package]
+name = "collie-app-cli"
+version = "0.1.0"
+edition = "2021"
+authors = ["Honsun Zhu <honsun@linux.com>"]
+readme = "README.md"
+keywords = ["docker-compose", "compose", "docker", "template", "handlebars"]
+categories = ["container", "cli"]
+repository = "https://github.com/chaitin/collie-app-cli"
+license-file = "LICENSE.md"
+description = """
+A CLI tool to help you quickly develop and use the collie apps.
+"""
+
+[dependencies]
+anyhow = "1"
+async-recursion = "1.0"
+async-trait = "0.1"
+cfg-if = "1"
+clap = { version = "4.0", features = ["derive"] }
+const_format = "0.2"
+futures = "0.3"
+handlebars = "4.3"
+lazy_static = "1.4"
+log = { version = "0.4" }
+log4rs = "1"
+regex = "1"
+reqwest = { version = "0.11", features = ["stream"] }
+rust-embed = { version = "6.6", features = ["compression"] }
+scopeguard = "1.1"
+semver = "1"
+serde = "1"
+serde_yaml = "0.9"
+tokio = { version = "1", features = ["full"] }
+tokio-util = { version = "0.7", features = ["full"] }
+which = "4"
+
+[build-dependencies]
+vergen = { version = "8.1", default-features = false, features = [
+  "build",
+  "cargo",
+  "git",
+  "gix",
+  "rustc",
+] }
+
+[target.'cfg(windows)'.build-dependencies]
+embed-resource = "2.1"

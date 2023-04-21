@@ -15,7 +15,7 @@ COLLIE APP CLI 是一个主机运维助手应用的脚手架工具，采用 Rust
 
 ```shell
 git clone https://github.com/chaitin/collie-app-cli.git
-cd agent
+cd collie-app-cli
 cargo build --release
 ```
 
@@ -23,7 +23,7 @@ cargo build --release
 
 1. Fork 我们的仓库
 2. Clone Fork 后的仓库到你的电脑
-3. 创建功能/特性分支，并机遇此分支开发
+3. 创建功能/特性分支，并基于此分支开发
 4. 将更改提交到功能/特性分支并推送到你 Fork 的仓库
 5. 发送 Pull Request（PR）到主仓库
 6. 接受社区的 Review 并处理评论

@@ -7,18 +7,11 @@ use anyhow::{bail, Context, Result};
 use async_recursion::async_recursion;
 use futures::{pin_mut, select, FutureExt};
 use handlebars::Handlebars;
-use regex::Regex;
-use semver::VersionReq;
 use serde::{Deserialize, Serialize};
 use tokio::fs;
 use tokio::process::Command;
 use tokio_util::sync::CancellationToken;
 use which::which;
-
-lazy_static::lazy_static! {
-    static ref SERVER_REGEX: Regex = Regex::new(r"(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?").unwrap();
-    static ref COMPOSE_IN_DOCKER_VERSION: VersionReq = VersionReq::parse(">=20.10.13").unwrap();
-}
 
 use crate::compose_helper::compose;
 use crate::MANIFEST_FILENAME;
@@ -177,6 +170,7 @@ pub(super) async fn render_and_up<P: AsRef<Path>, T: AsRef<Path>>(
     Command::new(shell)
         .args([OsStr::new("-c"), init_script_file.as_os_str()])
         .current_dir(target)
+        .kill_on_drop(true)
         .stdin(Stdio::inherit())
         .stdout(Stdio::inherit())
         .stderr(Stdio::inherit())

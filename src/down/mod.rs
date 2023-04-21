@@ -31,6 +31,7 @@ pub(super) async fn down<T: AsRef<Path>>(target: T, token: CancellationToken) ->
     Command::new(shell)
         .args([OsStr::new("-c"), uninstall_script_file.as_os_str()])
         .current_dir(target)
+        .kill_on_drop(true)
         .stdin(Stdio::inherit())
         .stdout(Stdio::inherit())
         .stderr(Stdio::inherit())

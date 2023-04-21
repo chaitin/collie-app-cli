@@ -6,6 +6,7 @@ use rust_embed::RustEmbed;
 use tokio::fs;
 use tokio_util::sync::CancellationToken;
 
+#[cfg(target_family = "unix")]
 use crate::{INIT_SCRIPT_PATH, UNINSTALL_SCRIPT_PATH, UPGRADE_SCRIPT_PATH};
 
 #[derive(RustEmbed)]

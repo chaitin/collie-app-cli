@@ -1,4 +1,5 @@
 metadata:
+  app_id: {{app_id}}
   name: redis
   desc: fast kv database.
   tags:

@@ -2,12 +2,19 @@ use std::path::{Path, PathBuf};
 
 use anyhow::{bail, Context, Result};
 use futures::{pin_mut, select, FutureExt};
+use handlebars::Handlebars;
 use rust_embed::RustEmbed;
+use serde::Serialize;
 use tokio::fs;
 use tokio_util::sync::CancellationToken;
 
 #[cfg(target_family = "unix")]
 use crate::{INIT_SCRIPT_PATH, UNINSTALL_SCRIPT_PATH, UPGRADE_SCRIPT_PATH};
+
+#[derive(Debug, Serialize)]
+struct ManifestVar {
+    app_id: String,
+}
 
 #[derive(RustEmbed)]
 #[folder = "src/new/tpl"]
@@ -62,5 +69,24 @@ pub(super) async fn generate<P: AsRef<Path>>(
                 .with_context(|| format!("set {} permissions", file_path.display()))?
         }
     }
+
+    // render tpl manifest
+    let manifest_path = path.join("manifest.yaml");
+    let mut handlebars = Handlebars::new();
+    let template_content = fs::read_to_string(&manifest_path)
+        .await
+        .context("read template content")?;
+    handlebars
+        .register_template_string("manifest.yaml", &template_content)
+        .context("compile template file")?;
+    let manifest_var = ManifestVar {
+        app_id: format!("{}@COLI", xid::new()),
+    };
+    let manifest_file_content = handlebars
+        .render("manifest.yaml", &manifest_var)
+        .context("render template")?;
+    fs::write(manifest_path, manifest_file_content)
+        .await
+        .context("write result to file")?;
     Ok(path)
 }

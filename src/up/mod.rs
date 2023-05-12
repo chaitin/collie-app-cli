@@ -156,10 +156,6 @@ pub(super) async fn render_and_up<P: AsRef<Path>, T: AsRef<Path>>(
         return Ok(());
     }
 
-    compose(token.clone(), &target, ["up", "-d"])
-        .await
-        .context("run 'docker[.exe] compose up -d'")?;
-
     // run custom init script
     let init_script_file = target
         .join("scripts")
@@ -177,5 +173,10 @@ pub(super) async fn render_and_up<P: AsRef<Path>, T: AsRef<Path>>(
         .status()
         .await
         .with_context(|| format!("run 'sh -c {}'", init_script_file.display()))?;
+
+    // compose up the app
+    compose(token.clone(), &target, ["up", "-d"])
+        .await
+        .context("run 'docker[.exe] compose up -d'")?;
     Ok(())
 }

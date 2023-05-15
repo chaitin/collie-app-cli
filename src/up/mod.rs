@@ -1,3 +1,5 @@
+mod rand_pass;
+
 use std::collections::HashMap;
 use std::ffi::OsStr;
 use std::path::Path;
@@ -6,13 +8,14 @@ use std::process::Stdio;
 use anyhow::{bail, Context, Result};
 use async_recursion::async_recursion;
 use futures::{pin_mut, select, FutureExt};
-use handlebars::Handlebars;
+use handlebars::{no_escape, Handlebars};
 use serde::{Deserialize, Serialize};
 use tokio::fs;
 use tokio::process::Command;
 use tokio_util::sync::CancellationToken;
 use which::which;
 
+use self::rand_pass::rand_pass_helper;
 use crate::compose_helper::compose;
 use crate::MANIFEST_FILENAME;
 
@@ -133,6 +136,10 @@ pub(super) async fn render_and_up<P: AsRef<Path>, T: AsRef<Path>>(
 
     // create the handlebars registry
     let mut handlebars = Handlebars::new();
+    handlebars.register_escape_fn(no_escape);
+    handlebars.set_strict_mode(true);
+    // {{rand_pass <local_var_name> <pass_len>}}
+    handlebars.register_helper("rand_pass", Box::new(rand_pass_helper));
     for template_rel_path in &manifest.templates {
         let template_file_path = target.join(template_rel_path);
         let template_content = fs::read_to_string(template_file_path)

@@ -12,11 +12,14 @@ pub const GIT_SHA: &str = env!("VERGEN_GIT_SHA");
 /// Timestamp of the latest git commit.
 pub const COMMIT_DATE: &str = env!("VERGEN_GIT_COMMIT_TIMESTAMP");
 
-/// Collie engine crate version.
+/// Collie App CLI crate version.
 pub const SEMVER: &str = env!("CARGO_PKG_VERSION");
 
 /// A ci task id.
-pub const CI_TASK_ID: Option<&str> = option_env!("CI_TASK_ID");
+pub const CI_TASK_ID: &str = match option_env!("CI_TASK_ID") {
+    Some(v) => v,
+    None => "self-build",
+};
 
 pub const fn version() -> &'static str {
     formatcp!(
@@ -31,7 +34,7 @@ OS/Arch:         {}/{}"#,
         RUSTC_SEMVER,
         GIT_SHA,
         COMMIT_DATE,
-        CI_TASK_ID.unwrap_or("self-build"),
+        CI_TASK_ID,
         BUILD_DATE,
         std::env::consts::OS,
         std::env::consts::ARCH
